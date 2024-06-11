@@ -25,10 +25,10 @@ public class JwtUtils
 {
     private static final Logger logger= LoggerFactory.getLogger(JwtUtils.class);
     @Value("${spring.app.jwtSecret}")
-    private String jwtSecret;
+    private static String jwtSecret;
     @Value("${spring.app.jwtExpirationMS}")
     private String jwtExpirationMS;
-    public String getJwtFromHeader(HttpServletRequest request)
+    public static String getJwtFromHeader(HttpServletRequest request)
     {
         String bearerToken=request.getHeader("Authorization");
         logger.debug("Authorization Header: {}",bearerToken);
@@ -46,19 +46,19 @@ public class JwtUtils
                 signWith(key()).compact();
     }
 
-    public String getUsernameFromJwtToken(String token)
+    public static String getUsernameFromJwtToken(String token)
     {
         return Jwts.parser().verifyWith((SecretKey) key()).build().parseSignedClaims(token).getPayload().getSubject();
     }
 
 
 
-    private Key key()
+    private static Key key()
     {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
-    public boolean validateJwtToken(String authToken)
+    public static boolean validateJwtToken(String authToken)
     {
         try{
             Jwts.parser().verifyWith((SecretKey)key()).build().parseSignedClaims(authToken);
